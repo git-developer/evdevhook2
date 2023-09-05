@@ -46,6 +46,8 @@ jobs:
             mkdir -p "${icon_path}"
             touch "${icon_path}/${icon_name}.svg"
 
+            touch dummy-to-prevent-fail-of-appimage-builder.AppImage.zsync
+
             set -a
             APPIMAGE_ARCH="${build_arch}"
             APPDIR_APPINFO_ID="$(echo "${GITHUB_REPOSITORY}" | tr / .)"
@@ -64,8 +66,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: appimages
-          path: |
-            *.AppImage
+          path: ./*.AppImage
 
   release:
     runs-on: ubuntu-latest
