@@ -46,8 +46,6 @@ jobs:
             mkdir -p "${icon_path}"
             touch "${icon_path}/${icon_name}.svg"
 
-            #touch dummy-to-prevent-fail-of-appimage-builder.AppImage.zsync
-
             set -a
             APPIMAGE_ARCH="${build_arch}"
             APPDIR_APPINFO_ID="$(echo "${GITHUB_REPOSITORY}" | tr / .)"
