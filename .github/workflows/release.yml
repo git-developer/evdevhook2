@@ -22,20 +22,38 @@ jobs:
         with:
           platforms: ${{ matrix.platform }}
           outputs: build
-      - run: |
-          mkdir -p assets
-          find build -mindepth 1 -maxdepth 1 -type d -printf '%P\n' | while read -r platform; do
-            cd "${GITHUB_WORKSPACE}/build/${platform}"
-            tar -czf "${GITHUB_WORKSPACE}/assets/${GITHUB_REPOSITORY##*/}-${GITHUB_REF_NAME}-${platform}.tar.gz" *
-            cd -
-          done
+
+      - name: Prepare AppImage build
         shell: bash
+        run: |
+          mkdir -p AppDir
+          find build -mindepth 1 -maxdepth 1 -type d | while read -r path; do
+            cp -a "${path}" AppDir/usr
+          done
+          mkdir -p AppDir/usr/share/icons/hicolor/scalable/mimetypes
+          touch AppDir/usr/share/icons/hicolor/scalable/mimetypes/no-icon.svg
+          set -a
+          APPIMAGE_ARCH="$(uname -m)"
+          APPDIR_APPINFO_ID="$(echo "${GITHUB_REPOSITORY}" | tr / .)"
+          APPDIR_APPINFO_NAME="${GITHUB_REPOSITORY##*/}"
+          APPDIR_APPINFO_VERSION="${GITHUB_REF_NAME}"
+          APPDIR_APPINFO_ICON="no-icon"
+          APPDIR_APPINFO_EXEC="usr/bin/${APPDIR_APPINFO_NAME}"
+          APPDIR_APPINFO_EXEC_ARGS='$@'
+          APPDIR_APT_ARCH="$(echo '${{ matrix.platform }}' | cut -d/ -f2-)"
+          APPDIR_APT_SOURCES_DISTRO=jammy
+          APPDIR_APT_SOURCES_PUBKEY=871920D1991BC93C
+          envsubst <AppImageBuilder.template.yml >AppImageBuilder.yml
+
+      - uses: AppImageCrafters/build-appimage@v1
+
       - uses: actions/upload-artifact@v3
         with:
-          name: assets
+          name: build-output
           path: |
-            assets
-            !assets/provenance.json
+            build
+            !build/provenance.json
+            './*.AppImage'
 
   release:
     runs-on: ubuntu-latest
@@ -46,8 +64,17 @@ jobs:
     steps:
       - uses: actions/download-artifact@v3
         with:
-          name: assets
-          path: assets
+          name: build-output
+          path: build
+      - shell: bash
+        run: |
+          mkdir -p assets
+          cp -a build/*.AppImage assets
+          find build -mindepth 1 -maxdepth 1 -type d -printf '%P\n' | while read -r platform; do
+            cd "${GITHUB_WORKSPACE}/build/${platform}"
+            tar -czf "${GITHUB_WORKSPACE}/assets/${GITHUB_REPOSITORY##*/}-${GITHUB_REF_NAME}-${platform}.tar.gz" *
+            cd -
+          done
       - run: |
           algo="${SHA_ALGORITHM:-256}"
           find assets -type f | while read -r asset; do
