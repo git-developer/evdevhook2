@@ -15,17 +15,17 @@ AppDir:
     arch:
     - ${APPDIR_APT_ARCH}
     sources:
-    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION} main
+    - sourceline: deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION} main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-updates main
+    - sourceline: deb [arch=amd64,i386] http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-updates main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb http://security.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-security main
+    - sourceline: deb [arch=amd64,i386] http://security.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-security main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION} main
+    - sourceline: deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION} main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-updates main
+    - sourceline: deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-updates main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-security main
+    - sourceline: deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-security main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
     include: ${APPDIR_APT_INCLUDE}
 
