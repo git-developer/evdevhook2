@@ -88,5 +88,6 @@ jobs:
             shasum --binary --algorithm "${algo}" "${asset}" >"${asset}.sha${algo}"
           done
       - uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: assets/*
