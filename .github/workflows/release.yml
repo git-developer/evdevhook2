@@ -7,8 +7,6 @@ env:
 
 on:
   push:
-    tags:
-      - '*'
 
 jobs:
   build:
