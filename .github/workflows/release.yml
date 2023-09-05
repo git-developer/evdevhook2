@@ -67,6 +67,7 @@ jobs:
         with:
           name: appimages
           path: ./*.AppImage
+          if-no-files-found: error
 
   release:
     runs-on: ubuntu-latest
