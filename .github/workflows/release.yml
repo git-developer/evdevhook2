@@ -64,7 +64,8 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: appimages
-          path: *.AppImage
+          path: |
+            *.AppImage
 
   release:
     runs-on: ubuntu-latest
