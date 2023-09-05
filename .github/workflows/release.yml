@@ -52,7 +52,7 @@ jobs:
           path: |
             build
             !build/provenance.json
-            './*.AppImage'
+            *.AppImage
 
   release:
     runs-on: ubuntu-latest
@@ -67,7 +67,7 @@ jobs:
       - shell: bash
         run: |
           mkdir -p assets
-          cp -a build/*.AppImage assets
+          cp -a ./*.AppImage assets
           find build -mindepth 1 -maxdepth 1 -type d -printf '%P\n' | while read -r platform; do
             cd "${GITHUB_WORKSPACE}/build/${platform}"
             tar -czf "${GITHUB_WORKSPACE}/assets/${GITHUB_REPOSITORY##*/}-${GITHUB_REF_NAME}-${platform}.tar.gz" *
