@@ -42,6 +42,7 @@ jobs:
           APPDIR_APT_ARCH="$(echo '${{ matrix.platform }}' | cut -d/ -f2-)"
           APPDIR_APT_SOURCES_DISTRO=jammy
           APPDIR_APT_SOURCES_PUBKEY=871920D1991BC93C
+          APPDIR_APT_INCLUDE='[ libudev1, libevdev2, libglib2.0-0, libgee-0.8-2, upower ]'
           envsubst <AppImageBuilder.template.yml >AppImageBuilder.yml
           touch dummy.AppImage.zsync
       - uses: AppImageCrafters/build-appimage@v1
@@ -63,7 +64,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: build-output
-          path: build
       - shell: bash
         run: |
           mkdir -p assets
