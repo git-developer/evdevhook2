@@ -43,9 +43,9 @@ jobs:
           APPDIR_APT_SOURCES_DISTRO=jammy
           APPDIR_APT_SOURCES_PUBKEY=871920D1991BC93C
           envsubst <AppImageBuilder.template.yml >AppImageBuilder.yml
-
       - uses: AppImageCrafters/build-appimage@v1
-
+        env:
+          UPDATE_INFO: gh-releases-zsync|magnus-ISU|selectdefaultapplication|latest|*x86_64.AppImage.zsync
       - uses: actions/upload-artifact@v3
         with:
           name: build-output
