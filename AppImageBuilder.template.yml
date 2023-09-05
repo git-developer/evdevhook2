@@ -15,11 +15,11 @@ AppDir:
     arch:
     - ${APPDIR_APT_ARCH}
     sources:
-    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRO} main
+    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION} main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRO}-updates main
+    - sourceline: deb http://archive.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-updates main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    - sourceline: deb http://security.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRO}-security main
+    - sourceline: deb http://security.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRIBUTION}-security main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
     include: ${APPDIR_APT_INCLUDE}
 
