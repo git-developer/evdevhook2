@@ -21,12 +21,7 @@ AppDir:
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
     - sourceline: deb http://security.ubuntu.com/ubuntu/ ${APPDIR_APT_SOURCES_DISTRO}-security main
       key_url: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${APPDIR_APT_SOURCES_PUBKEY}
-    include:
-    - libudev1
-    - libevdev2
-    - libglib2.0-0
-    - libgee-0.8-2
-    - upower
+    include: [ libudev1, libevdev2, libglib2.0-0, libgee-0.8-2, upower ]
 
 AppImage:
   arch: ${APPIMAGE_ARCH}
