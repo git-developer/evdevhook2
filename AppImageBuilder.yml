@@ -1,5 +1,10 @@
 version: 1
 
+script:
+- icon_path="{{APPIMAGE_PATH}}/usr/share/icons/hicolor/scalable/mimetypes"
+- mkdir -p "${icon_path}"
+- cp -a evdevhook2-icon.svg "${icon_path}"
+
 AppDir:
   path: "{{APPIMAGE_PATH}}"
 
