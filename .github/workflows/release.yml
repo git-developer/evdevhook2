@@ -30,13 +30,24 @@ jobs:
           TARGET_PLATFORM: ${{ matrix.platform }}
         shell: bash
         run: |
-          set -a
-          APPIMAGE_ID="${APPIMAGE_ID:-$(echo "${GITHUB_REPOSITORY}" | tr / .)}"
-          APPIMAGE_NAME="${APPIMAGE_NAME:-${GITHUB_REPOSITORY_NAME_PART}}"
-          APPIMAGE_VERSION="${APPIMAGE_VERSION:-${GITHUB_REF_SLUG}}"
-          APPIMAGE_EXEC="${APPIMAGE_EXEC:-usr/bin/${GITHUB_REPOSITORY_NAME_PART}}"
-          .github/workflows/prepare-appimage build "${TARGET_PLATFORM}"
-          cat AppImageBuilder.yml
+          find build -mindepth 1 -maxdepth 1 -type d | while read -r path; do
+            icon_path="${path}/usr/share/icons/hicolor/scalable/mimetypes"
+            mkdir -p "${icon_path}"
+            touch "${icon_path}/no-icon.svg"
+
+            if [ ! -e *.AppImage.zsync ]; then
+              touch dummy-to-prevent-fail-of-appimage-builder.AppImage.zsync
+            fi
+
+            set -a
+            APPIMAGE_PATH="${path}"
+            APPIMAGE_VERSION="${GITHUB_REF_SLUG}"
+            APPIMAGE_APT_ARCH="${TARGET_PLATFORM#*/}"
+            APPIMAGE_APT_DISTRO="${UBUNTU_RELEASE}"
+            APPIMAGE_APT_PUBKEY="${UBUNTU_PUBKEY}"
+            APPIMAGE_ARCH="$(basename "${path}")"
+            printenv | grep ^APPIMAGE_ >>"${GITHUB_ENV}"
+          done
       - uses: AppImageCrafters/build-appimage@v1
       - uses: actions/upload-artifact@v3
         with:
