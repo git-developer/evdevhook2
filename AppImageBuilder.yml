@@ -7,7 +7,7 @@ AppDir:
     id: org.v1993.evdevhook2
     name: evdevhook2
     version: "{{APPIMAGE_VERSION}}"
-    icon: no-icon
+    icon: evdevhook2-icon
     exec: usr/bin/evdevhook2
     exec_args: $@
 
