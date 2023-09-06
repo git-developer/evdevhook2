@@ -14,10 +14,8 @@ jobs:
           - linux/amd64
 #          - linux/arm64
     steps:
-      - uses: xom9ikk/dotenv@v2
-        with:
-          path: .github/workflows
       - uses: actions/checkout@v4
+      - uses: falti/dotenv-action@v1
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
       - uses: docker/build-push-action@v4
