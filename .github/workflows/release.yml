@@ -35,7 +35,8 @@ jobs:
           APPIMAGE_NAME="${APPIMAGE_NAME:-${GITHUB_REPOSITORY_NAME_PART}}"
           APPIMAGE_VERSION="${APPIMAGE_VERSION:-${GITHUB_REF_SLUG}}"
           APPIMAGE_EXEC="${APPIMAGE_EXEC:-usr/bin/${GITHUB_REPOSITORY_NAME_PART}}"
-          .github/workflows/prepare-metadata build "${TARGET_PLATFORM}"
+          .github/workflows/prepare-appimage build "${TARGET_PLATFORM}"
+          cat AppImageBuilder.yml
       - uses: AppImageCrafters/build-appimage@v1
       - uses: actions/upload-artifact@v3
         with:
