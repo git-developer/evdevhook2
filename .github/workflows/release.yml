@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: falti/dotenv-action@v1
         with:
-          path: .github/workflows
+          path: .github/workflows/.env
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
