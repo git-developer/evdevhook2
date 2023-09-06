@@ -40,4 +40,4 @@ AppDir:
 
 AppImage:
   arch: "{{APPIMAGE_ARCH}}"
-  update-info: "gh-releases-zsync|v1993|evdevhook2|latest|evdevhook2-*-{{APPIMAGE_ARCH}}.AppImage.zsync"
+  update-information: "gh-releases-zsync|v1993|evdevhook2|latest|evdevhook2-*-{{APPIMAGE_ARCH}}.AppImage.zsync"
