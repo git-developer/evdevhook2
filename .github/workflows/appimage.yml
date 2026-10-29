@@ -2,7 +2,6 @@ name: Build and publish AppImages
 
 env:
   UBUNTU_RELEASE: jammy
-  UBUNTU_PUBKEY: 871920D1991BC93C
 
 on:
   pull_request:
@@ -13,56 +12,41 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
 
     strategy:
       fail-fast: true
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-26.04
+          - platform: linux/arm64
+            runner: ubuntu-26.04-arm
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: rlespinasse/github-slug-action@v4
+      - name: Checkout
+        uses: actions/checkout@v7
 
-      - name: Setup qemu for docker
-        uses: docker/setup-qemu-action@v3
-        if: matrix.platform != 'linux/amd64'
+      - name: Expose slug values
+        uses: rlespinasse/github-slug-action@v5
+
+      - name: Expose version
+        run: echo "VERSION=$(git describe --tags --always --dirty)" >>"${GITHUB_ENV}"
 
       - name: Setup buildx for docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
-      - name: Compile in docker
-        uses: docker/build-push-action@v5
+      - name: Compile and build appimage in docker
+        uses: docker/build-push-action@v7
         with:
           platforms: ${{ matrix.platform }}
           outputs: build
           build-args: |
             UBUNTU_RELEASE
+            VERSION
+            OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
 
-      - name: Prepare environment for building AppImage
-        env:
-          TARGET_PLATFORM: ${{ matrix.platform }}
-        shell: bash
-        run: |
-          set -eua
-          . build/.build-metadata.env
-          rm build/.build-metadata.env
-          APPIMAGE_SOURCE=build
-          APPIMAGE_VERSION="${GITHUB_REF_SLUG}"
-          APPIMAGE_APT_ARCH="${TARGETARCH}"
-          APPIMAGE_APT_DISTRO="${UBUNTU_RELEASE}"
-          APPIMAGE_APT_PUBKEY="${UBUNTU_PUBKEY}"
-          APPIMAGE_ARCH="${TARGETMACHINE}"
-          printenv | grep ^APPIMAGE_ >>"${GITHUB_ENV}"
-
-      - name: Build AppImage
-        uses: AppImageCrafters/build-appimage@v1.3
-        with:
-          recipe: dist/AppImageBuilder.yml
-
-      - uses: rlespinasse/slugify-value@v1.x
+      - uses: rlespinasse/slugify-value@v1
         id: platform-slug
         with:
           key: PLATFORM
@@ -70,12 +54,12 @@ jobs:
           publish-env: false
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: appimage-${{steps.platform-slug.outputs.slug-url}}
+          name: appimage-${{ steps.platform-slug.outputs.slug-url }}
           path: |
-            ./*.AppImage
-            ./*.AppImage.zsync
+            build/*.AppImage
+            build/*.AppImage.zsync
           if-no-files-found: error
 
   release:
