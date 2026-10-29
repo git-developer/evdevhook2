@@ -10,7 +10,8 @@ COPY . /
 ARG BUILD_TYPE=release
 ARG ENABLE_LTO=true
 ARG TARGETOS TARGETARCH TARGETVARIANT
-ARG VERSION OWNER=v1993
+ARG OWNER=v1993
+ARG VERSION=v0.0.0-unknown
 
 RUN meson setup \
       --fatal-meson-warnings \
@@ -30,8 +31,9 @@ RUN <<EOF
   export OUTNAME="evdevhook2-${VERSION}-${arch}.AppImage"
   export OUTPATH=/appimage
   export UPINFO="gh-releases-zsync|${OWNER}|evdevhook2|latest|evdevhook2-*-${arch}.AppImage.zsync"
-  export VERSION="${VERSION:-v0.0.0-unknown}"
+  export VERSION
   export DEPLOY_GTK=1
+  export DEPLOY_GLIBC=1
 
   sharun="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/quick-sharun.sh"
   wget "${sharun}" -O- | install /dev/stdin ./quick-sharun.sh
