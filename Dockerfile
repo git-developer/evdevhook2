@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
-ARG UBUNTU_RELEASE=jammy
+ARG DEBIAN_RELEASE=bookworm
 
-FROM ubuntu:$UBUNTU_RELEASE AS build-stage
+FROM debian:$DEBIAN_RELEASE AS build-stage
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       git ca-certificates wget patchelf build-essential libudev-dev libevdev-dev zlib1g-dev gvfs valac libgee-0.8-dev meson
 

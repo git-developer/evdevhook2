@@ -1,7 +1,7 @@
 name: Build and publish AppImages
 
 env:
-  UBUNTU_RELEASE: jammy
+  DEBIAN_RELEASE: bookworm
 
 on:
   pull_request:
@@ -42,7 +42,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           outputs: build
           build-args: |
-            UBUNTU_RELEASE
+            DEBIAN_RELEASE
             VERSION
             OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
 
