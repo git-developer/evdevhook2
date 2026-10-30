@@ -49,9 +49,17 @@ jobs:
       - name: Test
         run: |
           set -eu
+          run() {
+            if timeout 5 "${app}"; then
+              echo >&2 "Application returned unexpected before the timeout elapsed."
+              return 2
+            else
+              [ "$?" -eq 124 ]
+            fi
+          }
           find build -type f -name '*.AppImage' | while read -r appimage; do
             chmod +x "${appimage}"
-            ! "${appimage}" --gapplication-service 2>&1 | grep -i error
+            run
           done
 
       - uses: rlespinasse/slugify-value@v1
