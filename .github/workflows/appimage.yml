@@ -52,11 +52,8 @@ jobs:
           run() {
             app="${1}"
             if timeout 5 "${app}"; then
-              echo >&2 "Application returned unexpected before the timeout elapsed."
-              #  TODO ignore test failure on aarch64 to be able to debug the AppImage
-              if [ "$(uname -m)" != 'aarch64' ]; then
-                return 2
-              fi
+              echo >&2 "Application returned unexpectedly before the timeout elapsed."
+              return 2
             else
               [ "$?" -eq 124 ]
             fi
