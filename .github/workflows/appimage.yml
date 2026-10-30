@@ -1,7 +1,7 @@
 name: Build and publish AppImages
 
 env:
-  DEBIAN_RELEASE: trixie
+  DEBIAN_RELEASE: forky
 
 on:
   pull_request:
