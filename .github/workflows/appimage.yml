@@ -50,6 +50,7 @@ jobs:
         run: |
           set -eu
           run() {
+            app="${1}"
             if timeout 5 "${app}"; then
               echo >&2 "Application returned unexpected before the timeout elapsed."
               return 2
@@ -59,7 +60,7 @@ jobs:
           }
           find build -type f -name '*.AppImage' | while read -r appimage; do
             chmod +x "${appimage}"
-            run
+            run "${appimage}"
           done
 
       - uses: rlespinasse/slugify-value@v1
