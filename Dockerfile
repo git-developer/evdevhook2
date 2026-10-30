@@ -20,7 +20,7 @@ RUN meson setup \
       --prefix=/usr \
       /build && \
     meson compile -C /build && \
-    meson install --destdir=/release -C /build
+    meson install --destdir=/ -C /build
 
 RUN <<EOF
   set -eu
@@ -39,10 +39,11 @@ RUN <<EOF
   export DEPLOY_LOCALE=1
   export DEPLOY_GDK=1
   export DEPLOY_GLIB_NETWORKING=1
+  export CROSS_LIBC_DLOPEN=0
 
   sharun="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/quick-sharun.sh"
   wget "${sharun}" -O- | install /dev/stdin ./quick-sharun.sh
-  ./quick-sharun.sh /release/usr/bin/evdevhook2
+  ./quick-sharun.sh /usr/bin/evdevhook2
   ./quick-sharun.sh --make-appimage
 EOF
 
