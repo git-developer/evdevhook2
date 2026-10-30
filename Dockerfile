@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG UBUNTU_RELEASE=focal
+ARG UBUNTU_RELEASE=jammy
 
 FROM ubuntu:$UBUNTU_RELEASE AS build-stage
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
