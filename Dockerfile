@@ -22,6 +22,23 @@ RUN meson setup \
     meson compile -C /build && \
     meson install --destdir=/ -C /build
 
+# Test binary, before AppImage
+RUN <<EOF
+  set -eu
+  run() {
+    app="${1}"
+    if timeout 5 "${app}"; then
+      echo >&2 "Application returned unexpected before the timeout elapsed."
+      return 2
+    else
+      [ "$?" -eq 124 ]
+    fi
+  }
+  find build -type f -name '*.AppImage' | while read -r appimage; do
+    run /usr/bin/evdevhook2
+  done
+EOF
+
 RUN <<EOF
   set -eu
   arch="$(uname -m)"
