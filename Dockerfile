@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG DEBIAN_RELEASE=bookworm
+ARG DEBIAN_RELEASE=oldoldstable
 
 FROM debian:$DEBIAN_RELEASE AS build-stage
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
