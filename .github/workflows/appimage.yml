@@ -1,7 +1,7 @@
 name: Build and publish AppImages
 
 env:
-  DEBIAN_RELEASE: bookworm
+  DEBIAN_RELEASE: trixie
 
 on:
   pull_request:
