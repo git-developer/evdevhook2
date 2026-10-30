@@ -32,14 +32,6 @@ RUN <<EOF
   export OUTPATH=/appimage
   export UPINFO="gh-releases-zsync|${OWNER}|evdevhook2|latest|evdevhook2-*-${arch}.AppImage.zsync"
   export VERSION
-  export DEPLOY_GTK=1
-
-  # debug aarch64 crash `GLib-ERROR **: getauxval () failed: No such file or directory`
-  export DEPLOY_GLIBC=1
-  export DEPLOY_LOCALE=1
-  export DEPLOY_GDK=1
-  export DEPLOY_GLIB_NETWORKING=1
-  export CROSS_LIBC_DLOPEN=0
 
   sharun="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/quick-sharun.sh"
   wget "${sharun}" -O- | install /dev/stdin ./quick-sharun.sh
