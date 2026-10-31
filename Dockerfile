@@ -30,7 +30,7 @@ RUN <<EOF
   rc="$?"
   if [ "$rc" -ne 124 ]; then
     echo >&2 "Application returned unexpected code $rc."
-    [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
+    if [ "$rc" -ne 0 ]; then exit "$rc"; else exit 1; fi
   fi
 EOF
 

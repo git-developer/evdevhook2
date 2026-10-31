@@ -42,24 +42,8 @@ jobs:
             VERSION
             OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
 
-      - name: Test AppImage
-        run: |
-          run() {
-            app="${1}"
-            timeout 5 "${app}"
-            rc="$?"
-            if [ "$rc" -eq 124 ]; then
-              echo "AppImage started successfully."
-            else
-              echo "AppImage returned unexpected code $rc."
-              [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
-            fi
-          }
-          find build -type f -name '*.AppImage' | while read -r appimage; do
-            run "${appimage}"
-          done | grep .
-
-      - uses: rlespinasse/slugify-value@v1
+      - name: Slugify platform
+        uses: rlespinasse/slugify-value@v1
         id: platform-slug
         with:
           key: PLATFORM
@@ -77,8 +61,10 @@ jobs:
 
   test:
     runs-on: ${{ matrix.runner }}
+
     needs:
       - build
+
     strategy:
       fail-fast: false
       matrix:
@@ -87,8 +73,10 @@ jobs:
             runner: ubuntu-26.04
           - platform: linux/arm64
             runner: ubuntu-26.04-arm
+
     steps:
-      - uses: rlespinasse/slugify-value@v1
+      - name: Slugify platform
+        uses: rlespinasse/slugify-value@v1
         id: platform-slug
         with:
           key: PLATFORM
@@ -101,26 +89,21 @@ jobs:
           path: assets
           pattern: appimage-${{ steps.platform-slug.outputs.slug-url }}
 
-      - uses: addnab/docker-run-action@v3
+      - name: Test AppImage on Alpine
+        uses: addnab/docker-run-action@v3
         with:
           image: alpine
           options: -v ${{ github.workspace }}/assets:/appimage
           run: |
             apk add coreutils
-            run() {
-              app="${1}"
-              timeout 5 "${app}"
-              rc="$?"
-              if [ "$rc" -eq 124 ]; then
-                echo "AppImage started successfully."
-              else
-                echo "AppImage returned unexpected code $rc."
-                [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
-              fi
-            }
             find /appimage/ -type f -name '*.AppImage' | while read -r appimage; do
               chmod +x "${appimage}"
-              run "${appimage}"
+              timeout 5 "${appimage}"
+              rc="$?"
+              if [ "$rc" -ne 124 ]; then
+                echo >&2 "AppImage returned unexpected code $rc."
+                if [ "$rc" -ne 0 ]; then exit "$rc"; else exit 1; fi
+              fi
             done
 
   release:
@@ -141,6 +124,7 @@ jobs:
           path: assets
           pattern: appimage-*
           merge-multiple: true
+
       - name: Create checksum for release assets
         shell: bash
         run: |
@@ -148,6 +132,7 @@ jobs:
           find assets -type f | while read -r asset; do
             shasum --binary --algorithm "${algo}" "${asset}" >"${asset}.sha${algo}"
           done
+
       - name: Upload artifacts to GitHub release
         uses: softprops/action-gh-release@v1
         with:
