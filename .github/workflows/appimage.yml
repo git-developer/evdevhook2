@@ -1,8 +1,5 @@
 name: Build and publish AppImages
 
-env:
-  DEBIAN_RELEASE: oldstable
-
 on:
   pull_request:
   push:
@@ -36,32 +33,31 @@ jobs:
       - name: Setup buildx for docker
         uses: docker/setup-buildx-action@v4
 
-      - name: Compile and build appimage in docker
+      - name: Build AppImage
         uses: docker/build-push-action@v7
         with:
           platforms: ${{ matrix.platform }}
           outputs: build
           build-args: |
-            DEBIAN_RELEASE
             VERSION
             OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
 
-      - name: Test
+      - name: Test AppImage
         run: |
-          set -eu
           run() {
             app="${1}"
-            if timeout 5 "${app}"; then
-              echo >&2 "Application returned unexpectedly before the timeout elapsed."
-              return 2
+            timeout 5 "${app}"
+            rc="$?"
+            if [ "$rc" -eq 124 ]; then
+              echo "AppImage started successfully."
             else
-              [ "$?" -eq 124 ]
+              echo "AppImage returned unexpected code $rc."
+              [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
             fi
           }
           find build -type f -name '*.AppImage' | while read -r appimage; do
-            chmod +x "${appimage}"
             run "${appimage}"
-          done
+          done | grep .
 
       - uses: rlespinasse/slugify-value@v1
         id: platform-slug

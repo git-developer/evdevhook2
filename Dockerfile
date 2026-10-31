@@ -1,41 +1,57 @@
 # syntax=docker/dockerfile:1
-ARG DEBIAN_RELEASE=oldstable
+FROM ghcr.io/pkgforge-dev/archlinux AS build-stage
 
-FROM debian:$DEBIAN_RELEASE AS build-stage
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      git ca-certificates wget patchelf build-essential libudev-dev libevdev-dev zlib1g-dev gvfs valac libgee-0.8-dev meson
+# Install dependencies
+RUN <<EOF
+  pacman -Syu --noconfirm meson base-devel vala git libgee libevdev
+EOF
 
+# Build application
 COPY . /
-
 ARG BUILD_TYPE=release
 ARG ENABLE_LTO=true
 ARG TARGETOS TARGETARCH TARGETVARIANT
-ARG OWNER=v1993
-ARG VERSION=v0.0.0-unknown
-
-RUN meson setup \
+RUN <<EOF
+  set -eu
+  meson setup \
       --fatal-meson-warnings \
       "--buildtype=${BUILD_TYPE}" \
       "-Db_lto=${ENABLE_LTO}" \
       --prefix=/usr \
-      /build && \
-    meson compile -C /build && \
-    meson install --destdir=/ -C /build
+      /build
+  meson compile -C /build
+  meson install --destdir=/ -C /build
+EOF
 
+# Basic test for broken binary
+ARG APP_NAME=evdevhook2
+RUN <<EOF
+  timeout 5 "/usr/bin/${APP_NAME}"
+  rc="$?"
+  if [ "$rc" -ne 124 ]; then
+    echo >&2 "Application returned unexpected code $rc."
+    [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
+  fi
+EOF
+
+# Build AppImage
+ARG OWNER=owner
+ARG VERSION=v0.0.0-unknown
 RUN <<EOF
   set -eu
+  pacman -Syu --noconfirm patchelf xorg-server-xvfb
   arch="$(uname -m)"
 
-  export DESKTOP=./dist/evdevhook2.desktop
-  export ICON=./dist/evdevhook2.png
-  export OUTNAME="evdevhook2-${VERSION}-${arch}.AppImage"
+  export DESKTOP="dist/${APP_NAME}.desktop"
+  export ICON="dist/${APP_NAME}.png"
+  export OUTNAME="${APP_NAME}-${VERSION}-${arch}.AppImage"
   export OUTPATH=/appimage
-  export UPINFO="gh-releases-zsync|${OWNER}|evdevhook2|latest|evdevhook2-*-${arch}.AppImage.zsync"
+  export UPINFO="gh-releases-zsync|${OWNER}|${APP_NAME}|latest|${APP_NAME}-*-${arch}.AppImage.zsync"
   export VERSION
 
   sharun="https://raw.githubusercontent.com/pkgforge-dev/Anylinux-AppImages/refs/heads/main/useful-tools/quick-sharun.sh"
-  wget "${sharun}" -O- | install /dev/stdin ./quick-sharun.sh
-  ./quick-sharun.sh /usr/bin/evdevhook2
+  curl -fsSL "${sharun}" | install /dev/stdin ./quick-sharun.sh
+  ./quick-sharun.sh "/usr/bin/${APP_NAME}"
   ./quick-sharun.sh --make-appimage
 EOF
 
