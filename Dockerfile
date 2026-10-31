@@ -39,7 +39,7 @@ ARG OWNER=owner
 ARG VERSION=v0.0.0-unknown
 RUN <<EOF
   set -eu
-  pacman -Syu --noconfirm patchelf
+  pacman -Syu --noconfirm patchelf xorg-server-xvfb
   arch="$(uname -m)"
 
   export DESKTOP="dist/${APP_NAME}.desktop"

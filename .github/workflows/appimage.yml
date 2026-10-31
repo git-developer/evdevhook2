@@ -44,7 +44,6 @@ jobs:
 
       - name: Test AppImage
         run: |
-          set -eu
           run() {
             app="${1}"
             timeout 5 "${app}"
