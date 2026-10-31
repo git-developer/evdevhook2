@@ -24,19 +24,12 @@ RUN meson setup \
 
 # Test binary, before AppImage
 RUN <<EOF
-  set -eu
-  run() {
-    app="${1}"
-    if timeout 5 "${app}"; then
-      echo >&2 "Application returned unexpected before the timeout elapsed."
-      return 2
-    else
-      [ "$?" -eq 124 ]
-    fi
-  }
-  find build -type f -name '*.AppImage' | while read -r appimage; do
-    run /usr/bin/evdevhook2
-  done
+  timeout 5 /usr/bin/evdevhook2
+  rc="$?"
+  if [ "$rc" -ne 124 ]; then
+    echo >&2 "Application returned unexpected code $rc."
+    [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
+  fi
 EOF
 
 RUN <<EOF
