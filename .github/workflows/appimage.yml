@@ -75,6 +75,52 @@ jobs:
             build/*.AppImage.zsync
           if-no-files-found: error
 
+  test:
+    runs-on: ${{ matrix.runner }}
+    needs:
+      - build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-26.04
+          - platform: linux/arm64
+            runner: ubuntu-26.04-arm
+    steps:
+      - uses: rlespinasse/slugify-value@v1
+        id: platform-slug
+        with:
+          key: PLATFORM
+          value: ${{ matrix.platform }}
+          publish-env: false
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: assets
+          pattern: appimage-${{ steps.platform-slug.outputs.slug-url }}
+
+      - uses: addnab/docker-run-action@v3
+        with:
+          image: alpine
+          options: -v ${{ github.workspace }}/assets:/appimage
+          run: |
+            run() {
+              app="${1}"
+              timeout 5 "${app}"
+              rc="$?"
+              if [ "$rc" -eq 124 ]; then
+                echo "AppImage started successfully."
+              else
+                echo "AppImage returned unexpected code $rc."
+                [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
+              fi
+            }
+            find /appimage/ -type f -name '*.AppImage' | while read -r appimage; do
+              run "${appimage}"
+            done | grep .
+
   release:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
