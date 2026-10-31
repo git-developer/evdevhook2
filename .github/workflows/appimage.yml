@@ -19,9 +19,9 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-${{ env.RUNNER_VERSION }}
+            runner: ubuntu-${{ vars.RUNNER_VERSION }}
           - platform: linux/arm64
-            runner: ubuntu-${{ env.RUNNER_VERSION }}-arm
+            runner: ubuntu-${{ vars.RUNNER_VERSION }}-arm
 
     steps:
       - name: Checkout
@@ -43,7 +43,7 @@ jobs:
           outputs: build
           build-args: |
             VERSION
-            OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
+            OWNER=${{ vars.GITHUB_REPOSITORY_OWNER_PART }}
 
       - name: Test AppImage
         run: |
@@ -79,7 +79,7 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-${{ env.RUNNER_VERSION }}
+    runs-on: ubuntu-${{ vars.RUNNER_VERSION }}
 
     needs:
       - build
