@@ -7,9 +7,6 @@ on:
   release:
     types: published
 
-vars:
-  RUNNER_VERSION: 26.04
-
 jobs:
   build:
     runs-on: ${{ matrix.runner }}
@@ -19,9 +16,9 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-${{ vars.RUNNER_VERSION }}
+            runner: ubuntu-26.04
           - platform: linux/arm64
-            runner: ubuntu-${{ vars.RUNNER_VERSION }}-arm
+            runner: ubuntu-26.04-arm
 
     steps:
       - name: Checkout
