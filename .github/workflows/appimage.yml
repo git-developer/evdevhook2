@@ -48,14 +48,16 @@ jobs:
             app="${1}"
             timeout 5 "${app}"
             rc="$?"
-            if [ "$rc" -ne 124 ]; then
-              echo >&2 "Application returned unexpected code $rc."
+            if [ "$rc" -eq 124 ]; then
+              echo "AppImage started successfully."
+            else
+              echo "AppImage returned unexpected code $rc."
               [ "$rc" -eq 0 ] && exit 1 || exit "$rc"
             fi
           }
           find build -type f -name '*.AppImage' | while read -r appimage; do
             run "${appimage}"
-          done
+          done | grep .
 
       - uses: rlespinasse/slugify-value@v1
         id: platform-slug
