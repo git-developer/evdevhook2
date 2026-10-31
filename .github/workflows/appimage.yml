@@ -106,6 +106,7 @@ jobs:
           image: alpine
           options: -v ${{ github.workspace }}/assets:/appimage
           run: |
+            apk add coreutils
             run() {
               app="${1}"
               timeout 5 "${app}"
@@ -128,6 +129,7 @@ jobs:
 
     needs:
       - build
+      - test
 
     permissions:
       contents: write
