@@ -7,7 +7,7 @@ on:
   release:
     types: published
 
-env:
+vars:
   RUNNER_VERSION: 26.04
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
           outputs: build
           build-args: |
             VERSION
-            OWNER=${{ vars.GITHUB_REPOSITORY_OWNER_PART }}
+            OWNER=${{ env.GITHUB_REPOSITORY_OWNER_PART }}
 
       - name: Test AppImage
         run: |
