@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM ghcr.io/pkgforge-dev/archlinux AS build-stage
+ARG BASE_IMAGE=ghcr.io/pkgforge-dev/archlinux
+FROM $BASE_IMAGE AS build-stage
 
 # Install project dependencies
 RUN pacman -Syu --noconfirm meson base-devel vala git libgee libevdev
